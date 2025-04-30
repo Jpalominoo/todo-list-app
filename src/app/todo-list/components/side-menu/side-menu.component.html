@@ -1,0 +1,19 @@
+<div class="card height-full w-xl">
+    <p-menu [model]="items" class="flex justify-left px-5">
+        <ng-template #start>
+            <span class="inline-flex items-center gap-1 px-2 py-2">
+                <h1 class="text-xl font-bold">Menu</h1>
+            </span>
+        </ng-template>
+        <ng-template #submenuheader let-item>
+            <span class="text-primary font-bold">{{ item.label }}</span>
+        </ng-template>
+        <ng-template #item let-item>
+            <a pRipple class="flex items-center p-menu-item-link">
+                <span [class]="item.icon"></span>
+                <span class="ml-2">{{ item.label }}</span>
+                <p-badge *ngIf="item.badge" class="ml-auto" [value]="item.badge" />
+            </a>
+        </ng-template>
+    </p-menu>
+</div>
