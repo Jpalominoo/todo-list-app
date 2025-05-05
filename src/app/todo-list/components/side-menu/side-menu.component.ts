@@ -4,14 +4,15 @@ import { MenuModule } from 'primeng/menu';
 import { BadgeModule } from 'primeng/badge';
 import { RippleModule } from 'primeng/ripple';
 import { AvatarModule } from 'primeng/avatar';
-import { NgIf } from '@angular/common';
+import { CommonModule, NgIf } from '@angular/common';
+import { TagModule } from 'primeng/tag';
 
 @Component({
     selector: 'todo-list-side-menu',
-    styleUrls: ['./side-menu.component.css'],
     templateUrl: './side-menu.component.html',
+    styleUrls: ['./side-menu.component.css'],
     standalone: true,
-    imports: [MenuModule, BadgeModule, RippleModule, AvatarModule, NgIf]
+    imports: [MenuModule, BadgeModule, RippleModule, AvatarModule, NgIf, TagModule, CommonModule]
 })
 export class SideMenuComponent implements OnInit {
     items: MenuItem[] | undefined;
@@ -73,17 +74,15 @@ export class SideMenuComponent implements OnInit {
                 label: 'Tags',
                 items: [
                     {
-                        label: 'Tag 1',
-                        icon: 'pi pi-cog'
+                        tag: ' Tag 1', 
                     },
+
                     {
-                        label: 'Tag 2',
-                        icon: 'pi pi-inbox',
-                        badge: '2'
+                        tag: ' Tag 2', 
                     },
+
                     {
-                        label: 'New Tag',
-                        icon: 'pi pi-sign-out'
+                        tag: ' + Add Tag', 
                     }
                 ]
             },

@@ -1,0 +1,57 @@
+<div class="right-menu">
+    <p-menu [model]="items">
+        <ng-template #start>
+
+            <div class="elements">
+
+                <span>
+                    <h1>Tasks</h1>
+                </span>
+
+                <p-floatlabel variant="on">
+                    <input pInputText id="on_label" autocomplete="off" cols />
+                    <label for="on_label">Task 1</label>
+                </p-floatlabel>
+
+                <textarea pTextarea rows="5" cols="27" style="resize: none" placeholder="Description" class="h-full"></textarea>
+        
+                <div class="task-info">
+                    <label class="label">Task 1</label>
+                    <p-select [options]="cities" optionLabel="name" placeholder="Select a Category" class="w-full md:w-56" />
+                </div>
+
+                <div class="task-info">
+                    <label class="label">Date</label>
+                    <p-calendar formControlName="dueDate" showIcon dateFormat="yy-mm-dd" inputId="dueDate" />
+                </div>
+
+            </div>
+
+        </ng-template>
+
+
+        <ng-template #item let-item>
+            <a pRipple class="flex items-center p-menu-item-link">
+                <span [class]="item.icon"></span>
+                <span>{{ item.label }}</span>
+                <p-tag *ngIf="item.tag" [value]="item.tag" />
+                <p-button *ngIf="item.sublabel" label="Save Changes" variant="outlined" severity="success" />
+            </a>
+
+
+
+        </ng-template>
+
+        <ng-template #footer>
+            <p-button label="Save Changes" variant="outlined" severity="success" />
+        </ng-template>
+        
+
+    </p-menu>
+
+
+
+    
+</div>
+
+
