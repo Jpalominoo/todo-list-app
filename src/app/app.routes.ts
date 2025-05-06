@@ -6,8 +6,22 @@ export const routes: Routes = [
 
     {
     path: 'dashboard',
-    loadComponent: () => import('./todo-list/pages/dashboard-page/dashboard-page.component').then(c => c.DashboardPageComponent)
+    loadComponent: () => import('./todo-list/pages/dashboard-page/dashboard-page.component'),
 
+    children: [
+
+        {
+            path: 'tasks/:id',
+            loadComponent: () => import('./todo-list/pages/tasks-page/tasks-page.component'),
+        },
+
+
+        {
+            path: '**',
+            redirectTo: 'tasks',
+        }
+
+    ],
     
     },
     

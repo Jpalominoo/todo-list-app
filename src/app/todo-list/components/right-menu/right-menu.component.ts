@@ -65,7 +65,7 @@ export class RightMenuComponent implements OnInit {
             label: 'Subtasks',
             items: [
                 {
-                    label: 'Add New Subtag',
+                    label: 'Add New Subtask',
                     icon: 'pi pi-plus'
                 },
                 {

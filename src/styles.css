@@ -6,12 +6,6 @@
 
 /* TODO Altura de el menu izquierdo */
 
-.side-menu{
-    height: 100%;
-    border-radius: 10px;
-}
-
-
 .flex{
 
     height: 100%;
@@ -21,7 +15,6 @@
 html, body, app-root {
     height: 100%;
     width: 100%;
-
 }
 
  p-menu {
@@ -39,12 +32,19 @@ height: 100%;
 
 /* TODO Posicion del menu derecho */
 
-.flex-container{
+/* .flex-container{
     display: flex;
     flex-direction: row;
     width: 100%;
     height: 100%;
-}
+} */
+
+.flex-container-column{
+    display: grid;
+    place-items: center;
+    height: 300px;
+    width: 100%;
+  }
 
 
 .right-menu{
@@ -52,6 +52,9 @@ height: 100%;
     position: absolute;
     right: 0px;
     height: 100%;
+
+    overflow-y: auto; 
+    overflow-x: auto;
 }
 
 /* TODO Posicion de elementos del menu izquierdo */
@@ -114,6 +117,14 @@ p-button{
 
 
 
+/* Todo centrado de paginas */
+
+.router-outlet{
+    margin-left: 320px;
+    margin-right: 335px;
+    overflow-y: auto; 
+    overflow-x: auto;
+}
 
 
 

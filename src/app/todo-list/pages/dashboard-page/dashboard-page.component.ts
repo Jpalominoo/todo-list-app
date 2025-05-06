@@ -4,8 +4,8 @@ import { SideMenuComponent } from '../../components/side-menu/side-menu.componen
 import { RightMenuComponent } from '../../components/right-menu/right-menu.component';
 
 @Component({
-  selector: 'app-dashboard-page',
+  selector: 'todo-list-dashboard-page',
   imports: [RouterOutlet, SideMenuComponent, RightMenuComponent],
   templateUrl: './dashboard-page.component.html',
 })
-export class DashboardPageComponent { }
+export default class DashboardPageComponent { }

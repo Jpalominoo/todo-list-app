@@ -1,0 +1,14 @@
+
+<div class="flex-container-column">
+    <h1>{{ taskData?.title }}</h1>
+    <p>{{ taskData?.description }}</p>
+
+    
+
+</div>
+
+<ul *ngIf="taskData?.items && taskData.items.length > 0">
+  <li *ngFor="let item of taskData.items">{{ item }}</li>
+</ul>
+
+<!-- <p *ngIf="taskData?.items && taskData.items.length === 0">No hay tareas en esta sección.</p> -->
