@@ -120,12 +120,13 @@ export class SideMenuComponent implements OnInit {
               items: [
                   {
                       label: 'Calendar',
-                      icon: 'pi pi-cog'
+                      icon: 'pi pi-cog',
+                      badge: '2'
                   },
                   {
                       label: 'Sign Out',
                       icon: 'pi pi-inbox',
-                      badge: '2'
+                      
                   }
               ]
           },

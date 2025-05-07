@@ -4,7 +4,7 @@
 /* @import "tailwindcss"; */
 
 
-/* TODO Altura de el menu izquierdo */
+/* TODO left menu height */
 
 .flex{
 
@@ -30,7 +30,7 @@ height: 100%;
 
 
 
-/* TODO Posicion del menu derecho */
+/* TODO right menu position */
 
 /* .flex-container{
     display: flex;
@@ -57,7 +57,7 @@ height: 100%;
     overflow-x: auto;
 }
 
-/* TODO Posicion de elementos del menu izquierdo */
+/* TODO Left menu positions */
 
 ng-template{
     display:flex;
@@ -82,11 +82,9 @@ h1{
 
 }
 
-/* TODO Anchura de menus izquierdo y derecho */
 
 
-
-/* TODO posicion de los elementos del menu derecho */
+/* TODO Right menu positions */
 
 p-floatlabel{
     margin-top: 50px;
@@ -117,7 +115,7 @@ p-button{
 
 
 
-/* Todo centrado de paginas */
+/* Todo pages centering */
 
 .router-outlet{
     margin-left: 320px;

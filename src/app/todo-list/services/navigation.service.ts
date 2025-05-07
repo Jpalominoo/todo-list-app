@@ -12,4 +12,8 @@ export class NavigationService {
     this.router.navigate(path, { queryParams: queryParams });
   }
 
+  gotoLogin(): void {
+    this.router.navigate(['/dashboard/login']); // Si aún necesitas esta navegación directa
+  }
+
 }
