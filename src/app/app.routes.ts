@@ -3,15 +3,16 @@ import { authGuard } from './guards/auth.guard';
 
 export const routes: Routes = [
 
-    /* Arreglar paths para no poner el .then */
-
-
-
-
     {
     path: 'login',
-    loadComponent: () => import('./todo-list/pages/login-page/login-page.component'),
+    loadComponent: () => import('./auth/login/login.component'),
     },
+
+    {
+        path: 'signup',
+        loadComponent: () => import('./auth/signup/signup.component'),
+    },
+
     
     {
     path: 'dashboard',

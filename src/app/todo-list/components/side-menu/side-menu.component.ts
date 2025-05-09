@@ -35,6 +35,7 @@ export class SideMenuComponent implements OnInit {
                     {
                         label: 'Non started',
                         icon: 'pi pi-stopwatch',
+                        badge: '2',
                         command: (event) => {
                             console.log(event);
                             this.navigationService.gotoRoute(['/dashboard/tasks', 'non-started-tasks']);
@@ -44,6 +45,7 @@ export class SideMenuComponent implements OnInit {
                     {
                         label: 'In progress',
                         icon: 'pi pi-play-circle',
+                        badge: '2',
                         command: (event) => {
                             this.navigationService.gotoRoute(['/dashboard/tasks', 'in-progress-tasks']);
                         }
@@ -51,6 +53,7 @@ export class SideMenuComponent implements OnInit {
                     {
                       label: 'Paused',
                       icon: 'pi pi-pause-circle',
+                      badge: '2',
                       command: (event) => {
                         this.navigationService.gotoRoute(['/dashboard/tasks', 'paused-tasks']);
                     }
@@ -58,6 +61,7 @@ export class SideMenuComponent implements OnInit {
                     {
                       label: 'Late',
                       icon: 'pi pi-undo',
+                      badge: '2',
                       command: (event) => {
                         this.navigationService.gotoRoute(['/dashboard/tasks', 'late-tasks']);
                         
@@ -66,7 +70,8 @@ export class SideMenuComponent implements OnInit {
                     {
                       label: 'Finished',
                       icon: 'pi pi-thumbs-up',
-                      command: () => {
+                      badge: '2',
+                      command: (event) => {
                         this.navigationService.gotoRoute(['/dashboard/tasks', 'finished-tasks']);
                     }
                     }
@@ -76,35 +81,15 @@ export class SideMenuComponent implements OnInit {
                 label: 'Category',
                 items: [
                     {
-                        label: 'Category 1',
+                        label: 'Add New Category',
                         icon: 'pi pi-circle-fill' 
                     },
-                    {
-                        label: 'Category 2',
-                        icon: 'pi pi-circle-fill',
-                        badge: '2'
-                    },
-                    {
-                        label: 'Category 3',
-                        icon: 'pi pi-circle-fill'
-                    },
-                    {
-                      label: 'Add New List',
-                      icon: 'pi pi-circle-fill'
-                    }
                 ]
             },
 
           {
                 label: 'Tags',
                 items: [
-                    {
-                        tag: ' Tag 1', 
-                    },
-
-                    {
-                        tag: ' Tag 2', 
-                    },
 
                     {
                         tag: ' + Add Tag', 
@@ -126,6 +111,11 @@ export class SideMenuComponent implements OnInit {
                   {
                       label: 'Sign Out',
                       icon: 'pi pi-inbox',
+                      command: (event) => {
+                        this.navigationService.gotoLogin();
+                    }
+
+
                       
                   }
               ]

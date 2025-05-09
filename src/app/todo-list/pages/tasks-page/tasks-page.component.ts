@@ -2,12 +2,14 @@ import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { NgIf } from '@angular/common';
 import { NgFor } from '@angular/common';
+import { ButtonModule } from 'primeng/button';
+
 
 @Component({
   selector: 'todo-list-tasks-page',
   templateUrl: './tasks-page.component.html',
   standalone: true,
-  imports: [NgIf, NgFor]
+  imports: [NgIf, NgFor, ButtonModule,]
 })
 export default class TasksPageComponent implements OnInit {
   taskIdentifier: string | null = null;
@@ -23,29 +25,31 @@ export default class TasksPageComponent implements OnInit {
         this.loadTaskData(this.taskIdentifier);
       }
     });
+
+    
   }
 
   loadTaskData(id: string): void {
     switch (id) {
       case 'non-started-tasks':
-        this.taskData = { title: 'Non Started Tasks: ', description: 'General info about tasks', items: [], buttontext: 'Add Task' };
+        this.taskData = { title: 'Non Started Tasks: '};
         break;
       case 'in-progress-tasks':
-        this.taskData = { title: 'In Progress Tasks', description: 'General info about tasks', items: [], buttontext: 'Add Task' };
+        this.taskData = { title: 'In Progress Tasks'};
         break;
       case 'paused-tasks':
-        this.taskData = { title: 'Paused Tasks', description: 'General info about tasks', items: [], buttontext: 'Add Task' };
+        this.taskData = { title: 'Paused Tasks'};
         break;
       case 'late-tasks':
-        this.taskData = { title: 'Late Tasks', description: 'General info about tasks', items: [], buttontext: 'Add Task' };
+        this.taskData = { title: 'Late Tasks'};
         break;
       case 'finished-tasks':
-        this.taskData = { title: 'Finished Tasks', description: 'General info about tasks', items: [], buttontext: 'Add Task' };
+        this.taskData = { title: 'Finished Tasks' };
         break;
 
 
       default:
-        this.taskData = { title: 'Tasks', description: 'General info about tasks', items: [], buttontext: 'Add Task' };
+        this.taskData = { title: 'Tasks'};
         break;
     }
     console.log('Datos de la tarea cargados:', this.taskData);
