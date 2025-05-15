@@ -1,4 +1,19 @@
 <div class="side-menu">
+    <base href="./">
+    <todo-list-add-dialog
+        [visible]="categoryDialogVisible"
+        [header]="categoryDialogHeader"
+        (visibleChange)="categoryDialogVisible = $event"
+        (valueChange)="addNewCategory($event)"
+    ></todo-list-add-dialog>
+
+    <todo-list-add-dialog
+        [visible]="tagDialogVisible"
+        [header]="tagDialogHeader"
+        (visibleChange)="tagDialogVisible = $event"
+        (valueChange)="addNewTag($event)"
+    ></todo-list-add-dialog>
+
     <p-menu [model]="items" class="flex">
         <ng-template #start>
             <span>
@@ -9,12 +24,72 @@
             <span>{{ item.label }}</span>
         </ng-template>
         <ng-template #item let-item>
-            <a pRipple class="flex items-center p-menu-item-link">
+            <a pRipple class="flex items-center p-menu-item-link" *ngIf="item">
                 <span [class]="item.icon"></span>
-                <span>{{ item.label }}</span>
-                <p-badge *ngIf="item.badge"  [value]="item.badge" />
+                <span *ngIf="item.label" style="margin-right: 1rem">{{ item.label }}</span>
+                <p-badge *ngIf="item.badge" [value]="item.badge" />
                 <p-tag *ngIf="item.tag" [value]="item.tag" />
+                <div *ngIf="item.isDynamic" class="flex ml-auto">
+                    <ng-container *ngIf="editingCategory !== item.label && editingTag !== item.label">
+                        <button
+                            pButton
+                            pRipple
+                            type="button"
+                            icon="pi pi-pencil"
+                            class="p-button-rounded p-button-success custom-menu-button mr-2"
+                            (click)="startEditCategory(item.label)"
+                        ></button>
+                        <button
+                            pButton
+                            pRipple
+                            type="button"
+                            icon="pi pi-trash"
+                            class="p-button-rounded p-button-danger custom-menu-button"
+                            (click)="item.icon === 'pi pi-tag' ? confirmDeleteCategory(item.label) : confirmDeleteTag(item.label)"
+                        ></button>
+                    </ng-container>
+                    <ng-template #editingState>
+                        <ng-container *ngIf="editingCategory === item.label; else editingTagState">
+                            <input
+                                type="text"
+                                pInputText
+                                [(ngModel)]="item.label"
+                                #editInput1
+                                class="w-full"
+                                (keydown.enter)="saveEditCategory(item.label, editInput1.value)"
+                            />
+                            <button
+                                pButton
+                                pRipple
+                                type="button"
+                                icon="pi pi-times"
+                                class="p-button-rounded p-button-secondary ml-2 custom-menu-button"
+                                (click)="cancelEditCategory()"
+                            ></button>
+                        </ng-container>
+                        <ng-template #editingTagState>
+                            <input
+                                type="text"
+                                pInputText
+                                [(ngModel)]="item.label"
+                                #editInput
+                                class="w-full"
+                                (keydown.enter)="saveEditTag(item.label, editInput.value)"
+                            />
+                            <button
+                                pButton
+                                pRipple
+                                type="button"
+                                icon="pi pi-times"
+                                class="p-button-rounded p-button-secondary ml-2 custom-menu-button"
+                                (click)="cancelEditTag()"
+                            ></button>
+                        </ng-template>
+                    </ng-template>
+                </div>
             </a>
         </ng-template>
     </p-menu>
+    <p-confirmDialog></p-confirmDialog>
+    <p-toast></p-toast>
 </div>

@@ -57,6 +57,12 @@ height: 100%;
     overflow-x: auto;
 }
 
+.side-menu{
+
+    overflow-y: auto; 
+    overflow-x: auto;
+}
+
 /* TODO Left menu positions */
 
 ng-template{

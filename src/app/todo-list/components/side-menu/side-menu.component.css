@@ -1,5 +1,5 @@
 .side-menu {
-    position: fixed;
+    position: absolute;
     left: 0px;
     top: 0;
     right: 0;
@@ -9,4 +9,23 @@
     border-left: 1px solid #ccc;
     padding: 20px;
     box-sizing: border-box;
+}
+
+.custom-menu-button {
+    width: 2rem; 
+    height: 2rem; 
+    padding: 0.5rem; 
+    margin-left: auto; 
+    display: flex; 
+    align-items: center;
+    justify-content: center;
+}
+
+.custom-menu-button .pi {
+    font-size: 1rem; 
+}
+
+
+.p-menu-item-link > span:first-child + span {
+    margin-right: 1rem; 
 }

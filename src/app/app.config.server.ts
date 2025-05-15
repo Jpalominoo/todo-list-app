@@ -1,14 +1,25 @@
-import { mergeApplicationConfig, ApplicationConfig } from '@angular/core';
-import { provideServerRendering } from '@angular/platform-server';
-import { provideServerRouting } from '@angular/ssr';
-import { appConfig } from './app.config';
-import { serverRoutes } from './app.routes.server';
+import { ApplicationConfig } from '@angular/core';
+import { provideRouter } from '@angular/router';
+import { provideHttpClient } from '@angular/common/http';
+import { MessageService } from 'primeng/api';
+import { DialogModule } from 'primeng/dialog';
+import { ButtonModule } from 'primeng/button';
+import { InputTextModule } from 'primeng/inputtext';
+import { ToastModule } from 'primeng/toast';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { importProvidersFrom } from '@angular/core'; 
+import { mergeApplicationConfig } from '@angular/core';
 
-const serverConfig: ApplicationConfig = {
+export const appConfig: ApplicationConfig = {
   providers: [
-    provideServerRendering(),
-    provideServerRouting(serverRoutes)
+    provideRouter([]),
+    provideHttpClient(),
+    MessageService,
+    importProvidersFrom(BrowserAnimationsModule),
+    importProvidersFrom(DialogModule),
+    importProvidersFrom(ButtonModule),
+    importProvidersFrom(InputTextModule),
+    importProvidersFrom(ToastModule),
   ]
 };
 
-export const config = mergeApplicationConfig(appConfig, serverConfig);

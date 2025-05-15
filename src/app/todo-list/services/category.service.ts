@@ -1,52 +1,57 @@
-import { Injectable, signal, effect } from '@angular/core';
-import { Subject } from 'rxjs';
-
-export interface Category {
-    label: string;
-    value: string;
-    icon?: string;
-}
+import { Injectable } from '@angular/core';
+import { BehaviorSubject } from 'rxjs';
 
 @Injectable({
-    providedIn: 'root',
+  providedIn: 'root',
 })
 export class CategoryService {
-    private _categories = signal<Category[]>([
-        { label: 'Personal', value: 'personal', icon: 'pi pi-user' },
-        { label: 'Work', value: 'work', icon: 'pi pi-briefcase' },
-        { label: 'Shopping', value: 'shopping', icon: 'pi pi-shopping-cart' },
-    ]);
+  private categoriesSubject = new BehaviorSubject<string[]>(
+    this.getCategories()
+  );
+  categories$ = this.categoriesSubject.asObservable();
 
-    categories = this._categories.asReadonly();
+  constructor() {}
 
-    categoryAdded$ = new Subject<Category>();
+  // Helper method to get categories from localStorage
+  private getCategoriesFromLocalStorage(): string[] {
+    const categories = localStorage.getItem('categories');
+    return categories ? JSON.parse(categories) : [];
+  }
 
-    constructor() {
-        const savedCategories = localStorage.getItem('taskCategories');
-        if (savedCategories) {
-            try {
-                this._categories.set(JSON.parse(savedCategories));
-            } catch (error) {
-                console.error('Error al analizar las categorías guardadas', error);
-                localStorage.removeItem('taskCategories');
-            }
-        }
+  // Helper method to save categories to localStorage and update the observable
+  private saveCategoriesToLocalStorage(categories: string[]): void {
+    localStorage.setItem('categories', JSON.stringify(categories));
+    this.categoriesSubject.next(categories); // Notify subscribers of changes
+  }
 
-        // Utiliza el efecto de Angular para guardar en localStorage
-        effect(() => {
-            const categoriesToSave = this._categories(); // Obtén el valor actual de la señal
-            if (typeof window !== 'undefined') {
-                localStorage.setItem('taskCategories', JSON.stringify(categoriesToSave));
-            }
-        });
+  getCategories(): string[] {
+    const categories = localStorage.getItem('categories');
+    return categories ? JSON.parse(categories) : [];
+  }
+
+  saveCategories(categories: string[]): void {
+    localStorage.setItem('categories', JSON.stringify(categories));
+    this.categoriesSubject.next(categories);
+  }
+
+  addCategory(category: string): void {
+    const categories = this.getCategories();
+    categories.push(category);
+    this.saveCategories(categories);
+  }
+
+  removeCategory(category: string): void {
+    const categories = this.getCategories().filter((c) => c !== category);
+    this.saveCategories(categories);
+  }
+
+  // In CategoryService
+  editCategory(oldName: string, newName: string): void {
+    const categories = this.getCategories();
+    const index = categories.indexOf(oldName);
+    if (index !== -1) {
+      categories[index] = newName;
+      this.saveCategoriesToLocalStorage(categories);
     }
-
-    addCategory(category: Category): void {
-        this._categories.update(currentCategories => [...currentCategories, category]);
-        this.categoryAdded$.next(category);
-    }
-
-    getCategories(): Category[] {
-        return this._categories();
-    }
+  }
 }
