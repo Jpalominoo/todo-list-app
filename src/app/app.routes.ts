@@ -14,6 +14,7 @@ export const routes: Routes = [
 
   {
     path: 'dashboard',
+
     loadComponent: () =>
       import('./todo-list/pages/dashboard-page/dashboard-page.component'),
     canActivate: [authGuard],

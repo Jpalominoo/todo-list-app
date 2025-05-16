@@ -25,6 +25,11 @@ import { ToastModule } from 'primeng/toast';
 import { Subscription } from 'rxjs';
 import { ChangeDetectorRef } from '@angular/core';
 import { AddDialogComponent } from '../shared/add-dialog/add-dialog.component';
+import { CalendarModule } from 'primeng/calendar';
+import { DialogModule } from 'primeng/dialog';
+import { DynamicDialogModule, DialogService, DynamicDialogRef } from 'primeng/dynamicdialog';
+import { CalendarDialogComponent } from '../calendar-dialog/calendar-dialog.component';
+
 
 @Component({
   selector: 'todo-list-side-menu',
@@ -36,7 +41,8 @@ import { AddDialogComponent } from '../shared/add-dialog/add-dialog.component';
     MessageService,
     CategoryService,
     TagService,
-  ], // Providers a nivel del componente
+    DialogService,
+  ],
   standalone: true,
   imports: [
     MenuModule,
@@ -52,15 +58,23 @@ import { AddDialogComponent } from '../shared/add-dialog/add-dialog.component';
     ConfirmDialogModule,
     ToastModule,
     AddDialogComponent,
+    CalendarModule,
+    DialogModule,
+    DynamicDialogModule,
   ],
 })
 export class SideMenuComponent implements OnInit, OnDestroy {
   @ViewChild('editInput') editInput: ElementRef | undefined;
 
+  ref: DynamicDialogRef | undefined;
+
   items: MenuItem[] | undefined;
   editingCategory: string | null = null;
   editingTag: string | null = null;
+  selectedDate: Date | null = null;
 
+
+  calendarDialogVisible: boolean = false;
   categoryDialogVisible: boolean = false;
   tagDialogVisible: boolean = false;
   categoryDialogHeader: string = '';
@@ -75,7 +89,8 @@ export class SideMenuComponent implements OnInit, OnDestroy {
     private tagService: TagService,
     private confirmationService: ConfirmationService,
     private messageService: MessageService,
-    private cdRef: ChangeDetectorRef
+    private cdRef: ChangeDetectorRef,
+    private dialogService: DialogService, 
   ) {}
 
   ngOnInit(): void {
@@ -94,6 +109,9 @@ export class SideMenuComponent implements OnInit, OnDestroy {
     }
     if (this.tagSubscription) {
       this.tagSubscription.unsubscribe();
+    }
+    if (this.ref) {
+      this.ref.close();
     }
   }
 
@@ -178,7 +196,11 @@ export class SideMenuComponent implements OnInit, OnDestroy {
       { separator: true },
       {
         items: [
-          { label: 'Calendar', icon: 'pi pi-calendar', badge: '2' },
+          {
+            label: 'Calendar',
+            icon: 'pi pi-calendar',
+            command: () => this.openCalendarDialog()
+          },
           {
             label: 'Sign Out',
             icon: 'pi pi-sign-out',
@@ -194,6 +216,24 @@ export class SideMenuComponent implements OnInit, OnDestroy {
   openAddCategoryDialog(): void {
     this.categoryDialogVisible = true;
     this.categoryDialogHeader = 'Add New Category';
+  }
+
+  openCalendarDialog(): void {
+    this.ref = this.dialogService.open(CalendarDialogComponent, { 
+      header: 'Select a Date',
+      width: '20%',
+      height: '47%',
+      modal: true,
+      data: { initialDate: this.selectedDate },
+    });
+
+    this.ref.onClose.subscribe((date: Date | undefined) => {
+      if (date) {
+        this.selectedDate = date;
+        console.log('Selected Date:', this.selectedDate);
+        // this.navigationService.gotoCalendar(this.selectedDate);
+      }
+    });
   }
 
   openAddTagDialog(): void {
@@ -275,14 +315,14 @@ export class SideMenuComponent implements OnInit, OnDestroy {
     const categoryItems = categories.map((category) => ({
       label: category,
       icon: 'pi pi-tag',
-      isDynamic: true, 
+      isDynamic: true,
+      command: () => this.startEditCategory(category) // Añade funcionalidad de edición
     }));
     if (this.items) {
       let categoriesMenu = this.items.find(
         (item) => item.label === 'Categories'
       );
       if (categoriesMenu && categoriesMenu.items) {
-        
         categoriesMenu.items = [categoriesMenu.items[0], ...categoryItems];
       }
     }
@@ -294,6 +334,7 @@ export class SideMenuComponent implements OnInit, OnDestroy {
       label: tag,
       icon: 'pi pi-hashtag',
       isDynamic: true,
+      command: () => this.startEditTag(tag) // Añade funcionalidad de edición
     }));
     if (this.items) {
       let tagsMenu = this.items.find((item) => item.label === 'Tags');
@@ -341,7 +382,7 @@ export class SideMenuComponent implements OnInit, OnDestroy {
       message: `Are you sure you want to delete ${category}?`,
       header: 'Confirm',
       icon: 'pi pi-exclamation-triangle',
-      accept: () => this.deleteCategory(category), 
+      accept: () => this.deleteCategory(category),
     });
   }
 
@@ -350,7 +391,7 @@ export class SideMenuComponent implements OnInit, OnDestroy {
       message: `Are you sure you want to delete ${tag}?`,
       header: 'Confirm',
       icon: 'pi pi-exclamation-triangle',
-      accept: () => this.deleteTag(tag), 
+      accept: () => this.deleteTag(tag),
     });
   }
 }

@@ -13,7 +13,7 @@ import { ButtonModule } from 'primeng/button';
 })
 export default class TasksPageComponent implements OnInit {
   taskIdentifier: string | null = null;
-  taskData: any; // todo // aqui pondre la informacion de la tarea
+  taskData: any; 
 
   constructor(private route: ActivatedRoute) { }
 
