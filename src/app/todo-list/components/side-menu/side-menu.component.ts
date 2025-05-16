@@ -221,7 +221,7 @@ export class SideMenuComponent implements OnInit, OnDestroy {
   openCalendarDialog(): void {
     this.ref = this.dialogService.open(CalendarDialogComponent, { 
       header: 'Select a Date',
-      width: '20%',
+      width: '18.5%',
       height: '47%',
       modal: true,
       data: { initialDate: this.selectedDate },
