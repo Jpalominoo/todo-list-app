@@ -30,14 +30,14 @@
                 <p-badge *ngIf="item.badge" [value]="item.badge" />
                 <p-tag *ngIf="item.tag" [value]="item.tag" />
                 <div *ngIf="item.isDynamic" class="flex ml-auto">
-                    <ng-container *ngIf="editingCategory !== item.label && editingTag !== item.label">
+                    <ng-container *ngIf="!item.isEditing">
                         <button
                             pButton
                             pRipple
                             type="button"
                             icon="pi pi-pencil"
                             class="p-button-rounded p-button-success custom-menu-button mr-2"
-                            (click)="startEditCategory(item.label)"
+                            (click)="item.icon === 'pi pi-tag' ? startEditCategoryItem(item.label) : startEditTagItem(item.label)"
                         ></button>
                         <button
                             pButton
@@ -49,32 +49,14 @@
                         ></button>
                     </ng-container>
                     <ng-template #editingState>
-                        <ng-container *ngIf="editingCategory === item.label; else editingTagState">
-                            <input
-                                type="text"
-                                pInputText
-                                [(ngModel)]="item.label"
-                                #editInput1
-                                class="w-full"
-                                (keydown.enter)="saveEditCategory(item.label, editInput1.value)"
-                            />
-                            <button
-                                pButton
-                                pRipple
-                                type="button"
-                                icon="pi pi-times"
-                                class="p-button-rounded p-button-secondary ml-2 custom-menu-button"
-                                (click)="cancelEditCategory()"
-                            ></button>
-                        </ng-container>
-                        <ng-template #editingTagState>
+                        <ng-container *ngIf="item.isEditing">
                             <input
                                 type="text"
                                 pInputText
                                 [(ngModel)]="item.label"
                                 #editInput
                                 class="w-full"
-                                (keydown.enter)="saveEditTag(item.label, editInput.value)"
+                                (keydown.enter)="item.icon === 'pi pi-tag' ? saveEditCategory(item.label, editInput.value) : saveEditTag(item.label, editInput.value)"
                             />
                             <button
                                 pButton
@@ -82,9 +64,9 @@
                                 type="button"
                                 icon="pi pi-times"
                                 class="p-button-rounded p-button-secondary ml-2 custom-menu-button"
-                                (click)="cancelEditTag()"
+                                (click)="item.icon === 'pi pi-tag' ? cancelEditCategory() : cancelEditTag()"
                             ></button>
-                        </ng-template>
+                        </ng-container>
                     </ng-template>
                 </div>
             </a>

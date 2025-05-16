@@ -14,6 +14,6 @@ export const authGuard: CanActivateFn = (route, state): Observable<boolean> => {
        if (!isAuthenticated) {
          router.navigate(['/login']);
        }
-     })
+     }),
    );
 };

@@ -4,6 +4,7 @@ import {
   OnDestroy,
   ViewChild,
   ElementRef,
+  ChangeDetectorRef,
 } from '@angular/core';
 import { MenuItem } from 'primeng/api';
 import { MenuModule } from 'primeng/menu';
@@ -23,7 +24,6 @@ import { ConfirmDialogModule } from 'primeng/confirmdialog';
 import { MessageService } from 'primeng/api';
 import { ToastModule } from 'primeng/toast';
 import { Subscription } from 'rxjs';
-import { ChangeDetectorRef } from '@angular/core';
 import { AddDialogComponent } from '../shared/add-dialog/add-dialog.component';
 import { CalendarModule } from 'primeng/calendar';
 import { DialogModule } from 'primeng/dialog';
@@ -69,10 +69,7 @@ export class SideMenuComponent implements OnInit, OnDestroy {
   ref: DynamicDialogRef | undefined;
 
   items: MenuItem[] | undefined;
-  editingCategory: string | null = null;
-  editingTag: string | null = null;
   selectedDate: Date | null = null;
-
 
   calendarDialogVisible: boolean = false;
   categoryDialogVisible: boolean = false;
@@ -90,7 +87,7 @@ export class SideMenuComponent implements OnInit, OnDestroy {
     private confirmationService: ConfirmationService,
     private messageService: MessageService,
     private cdRef: ChangeDetectorRef,
-    private dialogService: DialogService, 
+    private dialogService: DialogService,
   ) {}
 
   ngOnInit(): void {
@@ -219,10 +216,9 @@ export class SideMenuComponent implements OnInit, OnDestroy {
   }
 
   openCalendarDialog(): void {
-    this.ref = this.dialogService.open(CalendarDialogComponent, { 
+    this.ref = this.dialogService.open(CalendarDialogComponent, {
       header: 'Select a Date',
-      width: '18.5%',
-      height: '47%',
+      width: '310px',
       modal: true,
       data: { initialDate: this.selectedDate },
     });
@@ -237,9 +233,9 @@ export class SideMenuComponent implements OnInit, OnDestroy {
   }
 
   openAddTagDialog(): void {
-    this.tagDialogVisible = true;
-    this.tagDialogHeader = 'Add New Tag';
-  }
+  this.tagDialogVisible = true;
+  this.tagDialogHeader = 'Add New Tag';
+}
 
   addNewCategory(newName: string): void {
     if (newName && newName.trim()) {
@@ -280,7 +276,7 @@ export class SideMenuComponent implements OnInit, OnDestroy {
     this.messageService.add({
       severity: 'success',
       summary: 'Category Updated',
-      detail: `Category ${oldName} updated to ${newName}`,
+      detail: `Category "${oldName}" updated to "${newName}"`,
     });
   }
 
@@ -289,7 +285,7 @@ export class SideMenuComponent implements OnInit, OnDestroy {
     this.messageService.add({
       severity: 'success',
       summary: 'Tag Updated',
-      detail: `Tag ${oldName} updated to ${newName}`,
+      detail: `Tag "${oldName}" updated to "${newName}"`,
     });
   }
 
@@ -316,7 +312,8 @@ export class SideMenuComponent implements OnInit, OnDestroy {
       label: category,
       icon: 'pi pi-tag',
       isDynamic: true,
-      command: () => this.startEditCategory(category) // Añade funcionalidad de edición
+      isEditing: false,
+      command: () => this.startEditCategoryItem(category)
     }));
     if (this.items) {
       let categoriesMenu = this.items.find(
@@ -334,7 +331,8 @@ export class SideMenuComponent implements OnInit, OnDestroy {
       label: tag,
       icon: 'pi pi-hashtag',
       isDynamic: true,
-      command: () => this.startEditTag(tag) // Añade funcionalidad de edición
+      isEditing: false,
+      command: () => this.startEditTagItem(tag)
     }));
     if (this.items) {
       let tagsMenu = this.items.find((item) => item.label === 'Tags');
@@ -345,36 +343,78 @@ export class SideMenuComponent implements OnInit, OnDestroy {
     this.cdRef.detectChanges();
   }
 
-  startEditCategory(category: string): void {
-    this.editingCategory = category;
+  startEditCategoryItem(categoryLabel: string): void {
+    this.items?.forEach(item => {
+      if (item['isDynamic'] && item.icon === 'pi pi-tag') {
+        item['isEditing'] = (item.label === categoryLabel);
+      }
+    });
+    this.cdRef.detectChanges();
     setTimeout(() => this.editInput?.nativeElement.focus(), 0);
   }
 
   cancelEditCategory(): void {
-    this.editingCategory = null;
+    this.items?.forEach(item => {
+      if (item['isDynamic'] && item.icon === 'pi pi-tag' && item['isEditing']) {
+        item['isEditing'] = false;
+      }
+    });
+    this.cdRef.detectChanges();
   }
 
   saveEditCategory(oldName: string, newName: string): void {
-    if (newName && newName !== oldName) {
-      this.editCategory(oldName, newName);
-    }
-    this.cancelEditCategory();
+    this.items?.forEach(item => {
+      if (item['isDynamic'] && item.icon === 'pi pi-tag' && item['isEditing'] && item.label) {
+        this.categoryService.editCategory(oldName, item.label);
+        this.messageService.add({
+          severity: 'success',
+          summary: 'Category Updated',
+          detail: `Category "${oldName}" updated to "${item.label}"`,
+        });
+        item['isEditing'] = false;
+      }
+    });
+    this.cdRef.detectChanges();
   }
 
-  startEditTag(tag: string): void {
-    this.editingTag = tag;
+  startEditTagItem(tagLabel: string): void {
+    this.items?.forEach(item => {
+      if (item['isDynamic'] && item.icon === 'pi pi-hashtag') {
+        item['isEditing'] = (item.label === tagLabel);
+      }
+    });
+    this.cdRef.detectChanges();
     setTimeout(() => this.editInput?.nativeElement.focus(), 0);
   }
 
   cancelEditTag(): void {
-    this.editingTag = null;
+    this.items?.forEach(item => {
+      if (item['isDynamic'] && item.icon === 'pi pi-hashtag' && item['isEditing']) {
+        item['isEditing'] = false;
+      }
+    });
+    this.cdRef.detectChanges();
   }
 
-  saveEditTag(oldName: string, newName: string): void {
-    if (newName && newName !== oldName) {
-      this.editTag(oldName, newName);
-    }
-    this.cancelEditTag();
+/*************  ✨ Windsurf Command ⭐  *************/
+  /**
+   * Called when the user saves the edited tag name.
+   * @param oldName The original name of the tag.
+   * @param newName The new name of the tag.
+   */
+/*******  e939149c-aab5-439f-b720-42d99be0712b  *******/  saveEditTag(oldName: string, newName: string): void {
+    this.items?.forEach(item => {
+      if (item['isDynamic'] && item.icon === 'pi pi-hashtag' && item['isEditing'] && item.label) {
+        this.tagService.editTag(oldName, item.label);
+        this.messageService.add({
+          severity: 'success',
+          summary: 'Tag Updated',
+          detail: `Tag "${oldName}" updated to "${item.label}"`,
+        });
+        item['isEditing'] = false;
+      }
+    });
+    this.cdRef.detectChanges();
   }
 
   confirmDeleteCategory(category: string): void {
