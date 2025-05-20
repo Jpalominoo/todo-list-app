@@ -30,44 +30,22 @@
                 <p-badge *ngIf="item.badge" [value]="item.badge" />
                 <p-tag *ngIf="item.tag" [value]="item.tag" />
                 <div *ngIf="item.isDynamic" class="flex ml-auto">
-                    <ng-container *ngIf="!item.isEditing">
-                        <button
-                            pButton
-                            pRipple
-                            type="button"
-                            icon="pi pi-pencil"
-                            class="p-button-rounded p-button-success custom-menu-button mr-2"
-                            (click)="item.icon === 'pi pi-tag' ? startEditCategoryItem(item.label) : startEditTagItem(item.label)"
-                        ></button>
-                        <button
-                            pButton
-                            pRipple
-                            type="button"
-                            icon="pi pi-trash"
-                            class="p-button-rounded p-button-danger custom-menu-button"
-                            (click)="item.icon === 'pi pi-tag' ? confirmDeleteCategory(item.label) : confirmDeleteTag(item.label)"
-                        ></button>
-                    </ng-container>
-                    <ng-template #editingState>
-                        <ng-container *ngIf="item.isEditing">
-                            <input
-                                type="text"
-                                pInputText
-                                [(ngModel)]="item.label"
-                                #editInput
-                                class="w-full"
-                                (keydown.enter)="item.icon === 'pi pi-tag' ? saveEditCategory(item.label, editInput.value) : saveEditTag(item.label, editInput.value)"
-                            />
-                            <button
-                                pButton
-                                pRipple
-                                type="button"
-                                icon="pi pi-times"
-                                class="p-button-rounded p-button-secondary ml-2 custom-menu-button"
-                                (click)="item.icon === 'pi pi-tag' ? cancelEditCategory() : cancelEditTag()"
-                            ></button>
-                        </ng-container>
-                    </ng-template>
+                    <!-- <button
+                        pButton
+                        pRipple
+                        type="button"
+                        icon="pi pi-pencil"
+                        class="p-button-rounded p-button-success custom-menu-button mr-2"
+                        (click)="item.icon === 'pi pi-tag' ? startEditCategoryItem(item.label) : startEditTagItem(item.label)"
+                    ></button> -->
+                    <button
+                        pButton
+                        pRipple
+                        type="button"
+                        icon="pi pi-trash"
+                        class="p-button-rounded p-button-danger custom-menu-button"
+                        (click)="item.icon === 'pi pi-tag' ? confirmDeleteCategory(item.label) : confirmDeleteTag(item.label)"
+                    ></button>
                 </div>
             </a>
         </ng-template>
