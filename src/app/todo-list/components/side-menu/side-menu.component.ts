@@ -218,7 +218,8 @@ export class SideMenuComponent implements OnInit, OnDestroy {
   openCalendarDialog(): void {
     this.ref = this.dialogService.open(CalendarDialogComponent, {
       header: 'Select a Date',
-      width: '310px',
+      width: '18.5%',
+      height: '45%',
       modal: true,
       data: { initialDate: this.selectedDate },
     });
@@ -276,7 +277,7 @@ export class SideMenuComponent implements OnInit, OnDestroy {
     this.messageService.add({
       severity: 'success',
       summary: 'Category Updated',
-      detail: `Category "${oldName}" updated to "${newName}"`,
+      detail: `Category "<span class="math-inline">\{oldName\}" updated to "</span>{newName}"`,
     });
   }
 
@@ -285,7 +286,7 @@ export class SideMenuComponent implements OnInit, OnDestroy {
     this.messageService.add({
       severity: 'success',
       summary: 'Tag Updated',
-      detail: `Tag "${oldName}" updated to "${newName}"`,
+      detail: `Tag "<span class="math-inline">\{oldName\}" updated to "</span>{newName}"`,
     });
   }
 
@@ -369,7 +370,7 @@ export class SideMenuComponent implements OnInit, OnDestroy {
         this.messageService.add({
           severity: 'success',
           summary: 'Category Updated',
-          detail: `Category "${oldName}" updated to "${item.label}"`,
+          detail: `Category "<span class="math-inline">\{oldName\}" updated to "</span>{item.label}"`,
         });
         item['isEditing'] = false;
       }
@@ -396,20 +397,14 @@ export class SideMenuComponent implements OnInit, OnDestroy {
     this.cdRef.detectChanges();
   }
 
-/*************  ✨ Windsurf Command ⭐  *************/
-  /**
-   * Called when the user saves the edited tag name.
-   * @param oldName The original name of the tag.
-   * @param newName The new name of the tag.
-   */
-/*******  e939149c-aab5-439f-b720-42d99be0712b  *******/  saveEditTag(oldName: string, newName: string): void {
+ saveEditTag(oldName: string, newName: string): void {
     this.items?.forEach(item => {
       if (item['isDynamic'] && item.icon === 'pi pi-hashtag' && item['isEditing'] && item.label) {
         this.tagService.editTag(oldName, item.label);
         this.messageService.add({
           severity: 'success',
           summary: 'Tag Updated',
-          detail: `Tag "${oldName}" updated to "${item.label}"`,
+          detail: `Tag "<span class="math-inline">\{oldName\}" updated to "</span>{item.label}"`,
         });
         item['isEditing'] = false;
       }
