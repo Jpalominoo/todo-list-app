@@ -4,7 +4,7 @@ import {
   OnDestroy,
   ViewChild,
   ElementRef,
-  ChangeDetectorRef, // Ensure ChangeDetectorRef is imported
+  ChangeDetectorRef,
 } from '@angular/core';
 import { MenuItem } from 'primeng/api';
 import { MenuModule } from 'primeng/menu';
@@ -233,8 +233,9 @@ export class SideMenuComponent implements OnInit, OnDestroy {
    */
   openCalendarDialog(): void {
     this.ref = this.dialogService.open(CalendarDialogComponent, {
-      header: 'Select a Date',
-      width: '350px', // Adjusted for calendar
+      header: 'Select a date',
+      width: '350px',
+      height: '450px',
       modal: true,
       data: { initialDate: this.selectedDate },
     });
@@ -508,18 +509,8 @@ export class SideMenuComponent implements OnInit, OnDestroy {
     */
   }
 
-/************* ✨ Windsurf Command ⭐  *************/
-  /**
-   * Called when the user saves the edited tag name.
-   * Currently commented out.
-   * @param oldName The original name of the tag.
-   * @param newName The new name of the tag.
-   */
-/******* e939149c-aab5-439f-b720-42d99be0712b  *******/
 saveEditTag(oldName: string, newName: string): void {
     /*
-    // Uncomment to enable inline editing
-    // Check if the new name is different from the old name and not empty
     if (newName && newName.trim() !== '' && oldName !== newName) {
       this.tagService.editTag(oldName, newName);
       this.messageService.add({
