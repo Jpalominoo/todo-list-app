@@ -77,8 +77,9 @@ export class SideMenuComponent implements OnInit, OnDestroy {
   categoryDialogHeader: string = '';
   tagDialogHeader: string = '';
 
-  private categorySubscription: Subscription | undefined;
-  private tagSubscription: Subscription | undefined;
+
+  private categorySubscription!: Subscription;
+  private tagSubscription!: Subscription;
 
   constructor(
     private navigationService: NavigationService,
@@ -91,17 +92,22 @@ export class SideMenuComponent implements OnInit, OnDestroy {
   ) {}
 
   ngOnInit(): void {
-    this.loadMenu();
-    // Subscribe to category and tag observables to automatically update the menu
+    this.buildMenuItems(this.categoryService.getCategories(), this.tagService.getTags());
+   // Suscribirse a los cambios de categorías
     this.categorySubscription = this.categoryService.categories$.subscribe(
       (categories) => {
-        this.updateCategoryItems(categories);
-        this.cdRef.detectChanges(); // Force change detection after categories update
+        // Cuando las categorías cambian, reconstruir el menú
+        // También pasamos los tags actuales para construir el menú completo
+        this.buildMenuItems(categories, this.tagService.getTags());
+        this.cdRef.detectChanges(); // Forzar la actualización de la vista
       }
     );
+    // Suscribirse a los cambios de tags
     this.tagSubscription = this.tagService.tags$.subscribe((tags) => {
-      this.updateTagItems(tags);
-      this.cdRef.detectChanges(); // Force change detection after tags update
+      // Cuando los tags cambian, reconstruir el menú
+      // También pasamos las categorías actuales para construir el menú completo
+      this.buildMenuItems(this.categoryService.getCategories(), tags);
+      this.cdRef.detectChanges(); // Forzar la actualización de la vista
     });
   }
 
@@ -120,7 +126,7 @@ export class SideMenuComponent implements OnInit, OnDestroy {
   /**
    * Initializes the side menu items.
    */
-  loadMenu(): void {
+  private buildMenuItems(categories: string[], tags: string[]): void {
     this.items = [
       { separator: true },
       {
@@ -186,6 +192,7 @@ export class SideMenuComponent implements OnInit, OnDestroy {
             icon: 'pi pi-plus',
             command: () => this.openAddCategoryDialog(),
           },
+          
         ],
       },
       {
