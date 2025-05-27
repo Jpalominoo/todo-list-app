@@ -1,6 +1,6 @@
-<p-dialog [header]="header" [(visible)]="visible" [modal]="true" [style]="{width: '50vw'}" (visibleChange)="visibleChange.emit($event)">
+<p-dialog [header]="header" [(visible)]="visible" [modal]="true"  (visibleChange)="visibleChange.emit($event)">
   <div class="field">
-    <label for="name" class="font-bold block mb-2">Name</label>
+    <label for="name">Name</label>
     <input type="text" pInputText id="name" [(ngModel)]="name" class="w-full">
   </div>
   <ng-template pTemplate="footer">

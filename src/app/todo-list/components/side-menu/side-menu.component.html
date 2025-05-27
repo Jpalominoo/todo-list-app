@@ -14,6 +14,13 @@
         (valueChange)="addNewTag($event)"
     ></todo-list-add-dialog>
 
+    <todo-list-add-task-dialog
+        [visible]="taskDialogVisible"
+        [header]="taskDialogHeader"
+        (visibleChange)="taskDialogVisible = $event"
+        (valueChange)="addNewTask($event)"
+    ></todo-list-add-task-dialog>
+
     <p-menu [model]="items" class="flex">
         <ng-template #start>
             <span>
@@ -30,14 +37,6 @@
                 <p-badge *ngIf="item.badge" [value]="item.badge" />
                 <p-tag *ngIf="item.tag" [value]="item.tag" />
                 <div *ngIf="item.isDynamic" class="flex ml-auto">
-                    <!-- <button
-                        pButton
-                        pRipple
-                        type="button"
-                        icon="pi pi-pencil"
-                        class="p-button-rounded p-button-success custom-menu-button mr-2"
-                        (click)="item.icon === 'pi pi-tag' ? startEditCategoryItem(item.label) : startEditTagItem(item.label)"
-                    ></button> -->
                     <button
                         pButton
                         pRipple

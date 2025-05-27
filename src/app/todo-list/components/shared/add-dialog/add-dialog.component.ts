@@ -8,6 +8,7 @@ import { CommonModule } from '@angular/common';
 @Component({
   selector: 'todo-list-add-dialog',
   templateUrl: './add-dialog.component.html',
+    styleUrls: ['./add-dialog.component.css'],
   standalone: true,
   imports: [FormsModule, InputTextModule, ButtonModule, DialogModule, CommonModule]
 })

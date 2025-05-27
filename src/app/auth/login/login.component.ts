@@ -10,7 +10,6 @@ import { NgIf } from '@angular/common';
   selector: 'app-login',
   standalone: true,
   imports: [ReactiveFormsModule, RouterLink, CommonModule, NgIf],
-  providers: [AuthService],
   templateUrl: './login.component.html',
   styleUrls: ['./login.component.css'],
 })

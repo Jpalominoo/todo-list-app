@@ -1,12 +1,7 @@
 import { Injectable, signal } from '@angular/core';
-import { BehaviorSubject, Observable, of, throwError } from 'rxjs';
-import { tap, delay, catchError } from 'rxjs/operators';
-
-interface User {
-  id: string;
-  email: string;
-  password?: string;
-}
+import { BehaviorSubject, Observable, of } from 'rxjs';
+import { delay} from 'rxjs/operators';
+import { User } from '../interfaces/user.interface';
 
 @Injectable({
   providedIn: 'root',
@@ -16,7 +11,6 @@ export class AuthService {
   private readonly CURRENT_USER_KEY = 'currentUser';
   private readonly USERS_KEY = 'registeredUsers';
 
-  // Initialize with null, load in constructor
   private users: User[] = [];
 
   isAuthenticatedSig = signal<boolean>(false); 
@@ -26,12 +20,11 @@ export class AuthService {
   currentUser$ = new BehaviorSubject<User | null>(null);
 
   constructor() {
-    // Check if localStorage is available before using it.
     if (typeof window !== 'undefined') {
       this.users = this.loadUsersFromLocalStorage();
-      this.isAuthenticatedSig.set(this.isAuthenticated()); //update signals
+      this.isAuthenticatedSig.set(this.isAuthenticated()); 
       this.currentUserSig.set(this.getCurrentUser());
-      this.isAuthenticated$.next(this.isAuthenticated());  //update observables
+      this.isAuthenticated$.next(this.isAuthenticated()); 
       this.currentUser$.next(this.getCurrentUser());
     } else {
       /* console.warn('localStorage is not available.'); */
@@ -68,7 +61,7 @@ export class AuthService {
     const newUser: User = {
       id: Math.random().toString(36).substring(7),
       email: credentials.email,
-      password: credentials.password, // In real app, hash this!
+      password: credentials.password,
     };
     this.users.push(newUser);
     this.saveUsersToLocalStorage();

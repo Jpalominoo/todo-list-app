@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, Input, OnChanges, SimpleChanges, Output, EventEmitter } from '@angular/core';
 import { MenuItem } from 'primeng/api';
 import { Menu } from 'primeng/menu';
 import { ToastModule } from 'primeng/toast';
@@ -10,8 +10,8 @@ import { Select } from 'primeng/select';
 import { TagModule } from 'primeng/tag';
 import { CommonModule } from '@angular/common';
 import { ButtonModule } from 'primeng/button';
-
-
+import { Task } from '../../interfaces/task.interface';
+import { FormsModule } from '@angular/forms';
 
 interface City {
   name: string;
@@ -23,11 +23,20 @@ interface City {
     templateUrl: './right-menu.component.html',
     styleUrls: ['./right-menu.component.css'],
     standalone: true,
-    imports: [Menu, ToastModule, InputTextModule, FloatLabel , CalendarModule, DropdownModule, Select, TagModule, CommonModule, ButtonModule]
+    imports: [Menu, ToastModule, InputTextModule, FloatLabel , CalendarModule, DropdownModule, Select, TagModule, CommonModule, ButtonModule, FormsModule]
 })
-export class RightMenuComponent implements OnInit {
+export class RightMenuComponent implements OnInit, OnChanges {
+  @Input() task: Task | null = null;
+  @Output() closeMenu = new EventEmitter<void>();
+  @Output() saveTaskEvent = new EventEmitter<Partial<Task>>();
 
-  date: Date | undefined;
+  // Campos editables
+  title: string = '';
+  description: string = '';
+  status: Task['status'] = 'non-started-tasks';
+  category: string = '';
+  date: Date | null = null;
+  tag: string = '';
 
   cities: City[] | undefined;
 
@@ -99,4 +108,23 @@ export class RightMenuComponent implements OnInit {
 
     }
 
+  ngOnChanges(changes: SimpleChanges) {
+    if (changes['task'] && this.task) {
+      this.title = this.task.title;
+      this.description = this.task.description || '';
+      this.status = this.task.status;
+      // category, date, tag se pueden mapear aquí si existen en Task
+    }
+  }
+
+  saveTask() {
+    if (!this.task) return;
+    this.saveTaskEvent.emit({
+      ...this.task,
+      title: this.title,
+      description: this.description,
+      status: this.status,
+      // category, date, tag pueden añadirse aquí si están en Task
+    });
+  }
 }

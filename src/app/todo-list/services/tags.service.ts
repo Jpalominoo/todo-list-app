@@ -11,7 +11,6 @@ export class TagService {
   tags$ = this.tagsSubject.asObservable();
 
   constructor() {
-    // Cuando el servicio se inicializa, carga los tags y los emite
     this.saveTagsToLocalStorage(this.getTagsFromLocalStorage());
   }
 
@@ -26,7 +25,6 @@ export class TagService {
   }
 
   getTags(): string[] {
-    // Devuelve el valor actual del BehaviorSubject para asegurar coherencia
     return this.tagsSubject.getValue();
   }
 
@@ -35,14 +33,14 @@ export class TagService {
   }
 
   addTag(tag: string): void {
-    const tags = this.getTags(); // Obtiene el valor actual
+    const tags = this.getTags(); 
     tags.push(tag);
-    this.saveTags(tags); // Guarda y notifica
+    this.saveTags(tags); 
   }
 
   removeTag(tag: string): void {
     const tags = this.getTags().filter((t) => t !== tag);
-    this.saveTags(tags); // Guarda y notifica
+    this.saveTags(tags); 
   }
 
   editTag(oldName: string, newName: string): void {
@@ -50,7 +48,7 @@ export class TagService {
     const index = tags.indexOf(oldName);
     if (index !== -1) {
       tags[index] = newName;
-      this.saveTags(tags); // Guarda y notifica
+      this.saveTags(tags); 
     }
   }
 }
