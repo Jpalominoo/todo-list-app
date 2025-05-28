@@ -1,19 +1,18 @@
-import { CanActivateFn, Router } from '@angular/router';
 import { inject } from '@angular/core';
-import { AuthService } from '../todo-list/services/auth.service'; // Ajusta la ruta si es necesario
-import { tap } from 'rxjs/operators';
-import { Observable, of } from 'rxjs';
+import { AuthService } from '../todo-list/services/auth.service';
+import { Router } from '@angular/router';
 
-export const authGuard: CanActivateFn = (route, state): Observable<boolean> => {
+/**
+ * Guard that protects routes requiring authentication
+ * Redirects to login page if user is not authenticated
+ */
+export const authGuard = () => {
   const authService = inject(AuthService);
   const router = inject(Router);
 
+  if (authService.isAuthenticated()) {
+    return true;
+  }
 
-  return authService.isAuthenticated$.pipe(
-     tap(isAuthenticated => {
-       if (!isAuthenticated) {
-         router.navigate(['/login']);
-       }
-     }),
-   );
+  return router.parseUrl('/login');
 };

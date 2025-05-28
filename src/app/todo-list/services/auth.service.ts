@@ -1,8 +1,12 @@
 import { Injectable, signal } from '@angular/core';
 import { BehaviorSubject, Observable, of } from 'rxjs';
-import { delay} from 'rxjs/operators';
+import { delay } from 'rxjs/operators';
 import { User } from '../interfaces/user.interface';
 
+/**
+ * Service responsible for handling authentication-related operations
+ * Manages user authentication state and user data
+ */
 @Injectable({
   providedIn: 'root',
 })
@@ -13,8 +17,8 @@ export class AuthService {
 
   private users: User[] = [];
 
-  isAuthenticatedSig = signal<boolean>(false); 
-  currentUserSig = signal<User | null>(null); 
+  isAuthenticatedSig = signal<boolean>(false);
+  currentUserSig = signal<User | null>(null);
 
   isAuthenticated$ = new BehaviorSubject<boolean>(false);
   currentUser$ = new BehaviorSubject<User | null>(null);
@@ -22,16 +26,20 @@ export class AuthService {
   constructor() {
     if (typeof window !== 'undefined') {
       this.users = this.loadUsersFromLocalStorage();
-      this.isAuthenticatedSig.set(this.isAuthenticated()); 
+      this.isAuthenticatedSig.set(this.isAuthenticated());
       this.currentUserSig.set(this.getCurrentUser());
-      this.isAuthenticated$.next(this.isAuthenticated()); 
+      this.isAuthenticated$.next(this.isAuthenticated());
       this.currentUser$.next(this.getCurrentUser());
     } else {
-      /* console.warn('localStorage is not available.'); */
-      // TODO This warn is important but it is not necessary for the app to work
+      // Note: This warning is important for debugging but not critical for app functionality
+      // console.warn('localStorage is not available.');
     }
   }
 
+  /**
+   * Loads users from localStorage
+   * @returns Array of registered users
+   */
   private loadUsersFromLocalStorage(): User[] {
     try {
       const usersStr = localStorage.getItem(this.USERS_KEY);
@@ -42,6 +50,9 @@ export class AuthService {
     }
   }
 
+  /**
+   * Saves users to localStorage
+   */
   private saveUsersToLocalStorage(): void {
     if (typeof window !== 'undefined') {
       try {
@@ -52,6 +63,11 @@ export class AuthService {
     }
   }
 
+  /**
+   * Handles user registration
+   * @param credentials User registration data
+   * @returns Observable with registration result
+   */
   signup(credentials: any): Observable<any> {
     const existingUser = this.users.find((u) => u.email === credentials.email);
     if (existingUser) {
@@ -68,6 +84,11 @@ export class AuthService {
     return of({ message: 'Successful signup' }).pipe(delay(500));
   }
 
+  /**
+   * Handles user login
+   * @param credentials User login data
+   * @returns Observable with login result
+   */
   login(credentials: any): Observable<any> {
     const user = this.users.find(
       (u) => u.email === credentials.email && u.password === credentials.password
@@ -86,6 +107,9 @@ export class AuthService {
     }
   }
 
+  /**
+   * Handles user logout
+   */
   logout(): void {
     if (typeof window !== 'undefined') {
       localStorage.removeItem(this.AUTH_TOKEN_KEY);
@@ -97,6 +121,10 @@ export class AuthService {
     this.currentUser$.next(null);
   }
 
+  /**
+   * Gets the current authentication token
+   * @returns The authentication token or null if not found
+   */
   getAuthToken(): string | null {
     if (typeof window !== 'undefined') {
       return localStorage.getItem(this.AUTH_TOKEN_KEY);
@@ -104,30 +132,46 @@ export class AuthService {
     return null;
   }
 
+  /**
+   * Checks if user is authenticated
+   * @returns Boolean indicating authentication status
+   */
   isAuthenticated(): boolean {
     if (typeof window !== 'undefined') {
-       return !!localStorage.getItem(this.AUTH_TOKEN_KEY);
+      return !!localStorage.getItem(this.AUTH_TOKEN_KEY);
     }
     return false;
   }
 
+  /**
+   * Gets the current user data
+   * @returns The current user object or null if not found
+   */
   getCurrentUser(): User | null {
-    if (typeof window !== 'undefined'){
-        const userStr = localStorage.getItem(this.CURRENT_USER_KEY);
-        return userStr ? JSON.parse(userStr) : null;
+    if (typeof window !== 'undefined') {
+      const userStr = localStorage.getItem(this.CURRENT_USER_KEY);
+      return userStr ? JSON.parse(userStr) : null;
     }
     return null;
   }
 
+  /**
+   * Sets the authentication token
+   * @param token The authentication token to store
+   */
   private setAuthToken(token: string): void {
     if (typeof window !== 'undefined') {
-        localStorage.setItem(this.AUTH_TOKEN_KEY, token);
+      localStorage.setItem(this.AUTH_TOKEN_KEY, token);
     }
   }
 
+  /**
+   * Sets the current user data
+   * @param user The user object to store
+   */
   private setCurrentUser(user: User): void {
     if (typeof window !== 'undefined') {
-       localStorage.setItem(this.CURRENT_USER_KEY, JSON.stringify(user));
+      localStorage.setItem(this.CURRENT_USER_KEY, JSON.stringify(user));
     }
   }
 }
