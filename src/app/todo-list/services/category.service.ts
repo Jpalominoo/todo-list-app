@@ -1,11 +1,12 @@
 import { Injectable } from '@angular/core';
 import { BehaviorSubject } from 'rxjs';
+import { Category } from '../interfaces/category.interface';
 
 @Injectable({
   providedIn: 'root',
 })
 export class CategoryService {
-  private categoriesSubject = new BehaviorSubject<string[]>(
+  private categoriesSubject = new BehaviorSubject<Category[]>(
     this.getCategoriesFromLocalStorage()
   );
   categories$ = this.categoriesSubject.asObservable();
@@ -14,41 +15,42 @@ export class CategoryService {
     this.saveCategoriesToLocalStorage(this.getCategoriesFromLocalStorage());
   }
 
-  private getCategoriesFromLocalStorage(): string[] {
+  private getCategoriesFromLocalStorage(): Category[] {
     const categories = localStorage.getItem('categories');
     return categories ? JSON.parse(categories) : [];
   }
 
-  private saveCategoriesToLocalStorage(categories: string[]): void {
+  private saveCategoriesToLocalStorage(categories: Category[]): void {
     localStorage.setItem('categories', JSON.stringify(categories));
-    this.categoriesSubject.next(categories); 
+    this.categoriesSubject.next(categories);
   }
 
-  getCategories(): string[] {
+  getCategories(): Category[] {
     return this.categoriesSubject.getValue();
   }
 
-  saveCategories(categories: string[]): void {
+  saveCategories(categories: Category[]): void {
     this.saveCategoriesToLocalStorage(categories);
   }
 
-  addCategory(category: string): void {
-    const categories = this.getCategories(); 
-    categories.push(category);
-    this.saveCategories(categories); 
-  }
-
-  removeCategory(category: string): void {
-    const categories = this.getCategories().filter((c) => c !== category);
-    this.saveCategories(categories); 
-  }
-
-  editCategory(oldName: string, newName: string): void {
+  addCategory(category: Category): void {
     const categories = this.getCategories();
-    const index = categories.indexOf(oldName);
+    categories.push(category);
+    this.saveCategories(categories);
+  }
+
+  removeCategory(categoryId: number): void {
+    const categories = this.getCategories().filter((c) => c.id !== categoryId);
+    this.saveCategories(categories);
+  }
+
+  editCategory(categoryId: number, newName: string, newColor: string): void {
+    const categories = this.getCategories();
+    const index = categories.findIndex((c) => c.id === categoryId);
     if (index !== -1) {
-      categories[index] = newName;
-      this.saveCategories(categories); 
+      categories[index].name = newName;
+      categories[index].color = newColor;
+      this.saveCategories(categories);
     }
   }
 }

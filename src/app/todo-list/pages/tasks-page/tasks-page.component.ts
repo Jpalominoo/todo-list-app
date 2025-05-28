@@ -16,6 +16,7 @@ import { map } from 'rxjs/operators';
 @Component({
   selector: 'todo-list-tasks-page',
   templateUrl: './tasks-page.component.html',
+  styleUrls: ['./tasks-page.component.css'],
   standalone: true,
   imports: [NgIf, NgFor, ButtonModule, CommonModule, RightMenuComponent],
 })

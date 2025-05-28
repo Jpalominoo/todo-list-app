@@ -43,7 +43,7 @@
                         type="button"
                         icon="pi pi-trash"
                         class="p-button-rounded p-button-danger custom-menu-button"
-                        (click)="item.icon === 'pi pi-tag' ? confirmDeleteCategory(item.label) : confirmDeleteTag(item.label)"
+                        (click)="item.icon === 'pi pi-tag' ? confirmDeleteCategory(+item.id) : confirmDeleteTag(item.label)"
                     ></button>
                 </div>
             </a>

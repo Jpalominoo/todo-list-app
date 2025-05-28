@@ -34,8 +34,9 @@ import { AddTaskDialogComponent } from '../shared/add-task-dialog/add-task-dialo
 // NGXS Imports for Tasks
 import { Store, Select } from '@ngxs/store';
 import { TaskState } from '../../store/states/tasks.state';
-import { LoadTasks, AddTask } from '../../store/actions/tasks.actions';
+import { LoadTasks, AddTask, UpdateTask } from '../../store/actions/tasks.actions';
 import { Task } from '../../interfaces/task.interface';
+import { Category } from '../../interfaces/category.interface';
 
 @Component({
   selector: 'todo-list-side-menu',
@@ -142,7 +143,7 @@ export class SideMenuComponent implements OnInit, OnDestroy {
   /**
    * Initializes the side menu items.
    */
-  private buildMenuItems(categories: string[], tags: string[]): void {
+  private buildMenuItems(categories: Category[], tags: string[]): void {
     const nonStartedCount = this.store.selectSnapshot(TaskState.nonStartedTasks).length;
     const inProgressCount = this.store.selectSnapshot(TaskState.inProgressTasks).length;
     const pausedCount = this.store.selectSnapshot(TaskState.pausedTasks).length;
@@ -248,7 +249,7 @@ export class SideMenuComponent implements OnInit, OnDestroy {
         ],
       },
     ];
-    this.updateCategoryItems(this.categoryService.getCategories());
+    this.updateCategoryItems(categories);
     this.updateTagItems(this.tagService.getTags());
     this.cdRef.detectChanges();
   }
@@ -303,7 +304,12 @@ export class SideMenuComponent implements OnInit, OnDestroy {
 
   addNewCategory(newName: string): void {
     if (newName && newName.trim()) {
-      this.categoryService.addCategory(newName.trim());
+      const newCategory: Category = {
+        id: Date.now(),
+        name: newName.trim(),
+        color: '#2196f3', // Default color, or let user pick
+      };
+      this.categoryService.addCategory(newCategory);
       this.messageService.add({
         severity: 'success',
         summary: 'Category Added',
@@ -340,12 +346,12 @@ export class SideMenuComponent implements OnInit, OnDestroy {
   }
 
 
-  editCategory(oldName: string, newName: string): void {
-    this.categoryService.editCategory(oldName, newName);
+  editCategory(categoryId: number, newName: string, newColor: string): void {
+    this.categoryService.editCategory(categoryId, newName, newColor);
     this.messageService.add({
       severity: 'success',
       summary: 'Category Updated',
-      detail: `Category "${oldName}" updated to "${newName}"`,
+      detail: `Category updated to "${newName}"`,
     });
   }
 
@@ -359,18 +365,34 @@ export class SideMenuComponent implements OnInit, OnDestroy {
   }
 
 
-  deleteCategory(category: string): void {
-    this.categoryService.removeCategory(category);
+  async deleteCategory(categoryId: number): Promise<void> {
+    const cat = this.categoryService.getCategories().find(c => c.id === categoryId);
+    const categoryName = cat ? cat.name : undefined;
+    this.categoryService.removeCategory(categoryId);
+    if (categoryName) {
+      const allTasks: Task[] = this.store.selectSnapshot(TaskState.getTasks);
+      const affectedTasks = allTasks.filter(task => task.category === categoryName);
+      for (const task of affectedTasks) {
+        await this.store.dispatch(new UpdateTask({ ...task, category: undefined })).toPromise();
+      }
+      await this.store.dispatch(new LoadTasks()).toPromise();
+    }
     this.messageService.add({
       severity: 'success',
       summary: 'Category Deleted',
-      detail: `Category ${category} deleted`,
+      detail: `Category deleted`,
     });
   }
 
 
-  deleteTag(tag: string): void {
+  async deleteTag(tag: string): Promise<void> {
     this.tagService.removeTag(tag);
+    const allTasks: Task[] = this.store.selectSnapshot(TaskState.getTasks);
+    const affectedTasks = allTasks.filter(task => task.tag === tag);
+    for (const task of affectedTasks) {
+      await this.store.dispatch(new UpdateTask({ ...task, tag: undefined })).toPromise();
+    }
+    await this.store.dispatch(new LoadTasks()).toPromise();
     this.messageService.add({
       severity: 'success',
       summary: 'Tag Deleted',
@@ -378,12 +400,13 @@ export class SideMenuComponent implements OnInit, OnDestroy {
     });
   }
 
-  updateCategoryItems(categories: string[]): void {
+  updateCategoryItems(categories: Category[]): void {
     const categoryItems = categories.map((category) => ({
-      label: category,
+      label: category.name,
+      id: String(category.id),
       icon: 'pi pi-tag',
       isDynamic: true,
-      command: () => this.startEditCategoryItem(category)
+      command: () => this.startEditCategoryItem(category.name)
     }));
     if (this.items) {
       let categoriesMenu = this.items.find(
@@ -412,8 +435,15 @@ export class SideMenuComponent implements OnInit, OnDestroy {
   }
 
 
-  startEditCategoryItem(categoryLabel: string): void {
-    console.log('Edit Category clicked for (no action defined):', categoryLabel);
+  startEditCategoryItem(categoryName: string): void {
+    // Find the category by name and get its id
+    const category = this.categoryService.getCategories().find(cat => cat.name === categoryName);
+    if (category) {
+      // Open your edit dialog or logic here, passing category.id, category.name, category.color
+      // Example: this.editCategory(category.id, 'New Name', 'New Color');
+      // For now, just log:
+      console.log('Edit Category clicked for:', category);
+    }
   }
 
 
@@ -422,12 +452,12 @@ export class SideMenuComponent implements OnInit, OnDestroy {
   }
 
  
-  confirmDeleteCategory(category: string): void {
+  confirmDeleteCategory(categoryId: number): void {
     this.confirmationService.confirm({
-      message: `Are you sure you want to delete ${category}?`,
+      message: `Are you sure you want to delete this category?`,
       header: 'Confirm',
       icon: 'pi pi-exclamation-triangle',
-      accept: () => this.deleteCategory(category),
+      accept: () => this.deleteCategory(categoryId),
     });
   }
 

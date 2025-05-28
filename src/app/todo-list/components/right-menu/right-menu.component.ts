@@ -1,4 +1,4 @@
-import { Component, OnInit, Input, OnChanges, SimpleChanges, Output, EventEmitter } from '@angular/core';
+import { Component, OnInit, Input, OnChanges, SimpleChanges, Output, EventEmitter, OnDestroy } from '@angular/core';
 import { MenuItem } from 'primeng/api';
 import { Menu } from 'primeng/menu';
 import { ToastModule } from 'primeng/toast';
@@ -12,11 +12,10 @@ import { CommonModule } from '@angular/common';
 import { ButtonModule } from 'primeng/button';
 import { Task } from '../../interfaces/task.interface';
 import { FormsModule } from '@angular/forms';
-
-interface City {
-  name: string;
-  code: string;
-}
+import { Category } from '../../interfaces/category.interface';
+import { CategoryService } from '../../services/category.service';
+import { TagService } from '../../services/tags.service';
+import { Subscription } from 'rxjs';
 
 @Component({
     selector: 'todo-list-right-menu',
@@ -25,95 +24,64 @@ interface City {
     standalone: true,
     imports: [Menu, ToastModule, InputTextModule, FloatLabel , CalendarModule, DropdownModule, Select, TagModule, CommonModule, ButtonModule, FormsModule]
 })
-export class RightMenuComponent implements OnInit, OnChanges {
+export class RightMenuComponent implements OnInit, OnChanges, OnDestroy {
   @Input() task: Task | null = null;
   @Output() closeMenu = new EventEmitter<void>();
   @Output() saveTaskEvent = new EventEmitter<Partial<Task>>();
 
-  // Campos editables
+  // Editable fields
   title: string = '';
   description: string = '';
   status: Task['status'] = 'non-started-tasks';
   category: string = '';
-  date: Date | null = null;
   tag: string = '';
+  date: Date | null = null;
 
-  cities: City[] | undefined;
+  categories: Category[] = [];
+  tags: string[] = [];
+  items: MenuItem[] | undefined;
 
-    selectedCity: City | undefined;
+  private categorySub!: Subscription;
+  private tagSub!: Subscription;
 
-    items: MenuItem[] | undefined;
+  constructor(private categoryService: CategoryService, private tagService: TagService) {}
 
-    ngOnInit() {
-
-      this.items = [
-        {
-          separator: true
-        },
-        {
-          label: 'Tags',
-          items: [
-              {
-                  tag: ' Tag 1', 
-              },
-
-              {
-                  tag: ' Tag 2', 
-              },
-
-              {
-
-                  tag: ' + Add Tag', 
-              }
-          ]
+  ngOnInit() {
+    this.items = [
+      { separator: true },
+      {
+        label: 'Subtasks',
+        items: [
+          { label: 'Add New Subtask', icon: 'pi pi-plus' },
+          { label: 'Subtask 1' },
+          { label: 'Subtask 2' },
+          { label: 'Subtask 3' },
+        ]
       },
       {
-        separator: true
-       },
-        {
-            label: 'Subtasks',
-            items: [
-                {
-                    label: 'Add New Subtask',
-                    icon: 'pi pi-plus'
-                },
-                {
-                    label: 'Subtask 1',
-                },
-                {
-                  label: 'Subtask 2',
-                },
-                {
-                  label: 'Subtask 3',
-                }
-                
-            ]
-        },
-
-        {
-          items: [
-              {
-                sublabel: 'Save Changes',
-              }
-              
-          ]
+        items: [ { sublabel: 'Save Changes' } ]
       }
     ];
+    this.categorySub = this.categoryService.categories$.subscribe(categories => {
+      this.categories = categories;
+    });
+    this.tagSub = this.tagService.tags$.subscribe(tags => {
+      this.tags = tags;
+    });
+  }
 
-    this.cities = [
-      { name: 'Category 1', code: 'NY' },
-      { name: 'Category 2', code: 'RM' },
-      { name: 'Category 3', code: 'LDN' }
-  ];
-
-    }
+  ngOnDestroy() {
+    if (this.categorySub) this.categorySub.unsubscribe();
+    if (this.tagSub) this.tagSub.unsubscribe();
+  }
 
   ngOnChanges(changes: SimpleChanges) {
     if (changes['task'] && this.task) {
       this.title = this.task.title;
       this.description = this.task.description || '';
       this.status = this.task.status;
-      // category, date, tag se pueden mapear aquí si existen en Task
+      this.category = this.task.category || '';
+      this.tag = this.task.tag || '';
     }
   }
 
@@ -124,7 +92,8 @@ export class RightMenuComponent implements OnInit, OnChanges {
       title: this.title,
       description: this.description,
       status: this.status,
-      // category, date, tag pueden añadirse aquí si están en Task
+      category: this.category,
+      tag: this.tag,
     });
   }
 }
