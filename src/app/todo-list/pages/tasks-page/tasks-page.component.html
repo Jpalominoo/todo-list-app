@@ -22,6 +22,7 @@
       <p><strong>ID:</strong> {{ task.id }}</p>
       <p><strong>Category:</strong> {{ task.category || 'No category' }}</p>
       <p><strong>Tag:</strong> {{ task.tag || 'No tag' }}</p>
+      <p><strong>Date:</strong> {{ task.date ? (task.date | date:'mediumDate') : 'No date' }}</p>
       <!-- Add more details here if needed -->
     </div>
   </li>

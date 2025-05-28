@@ -66,64 +66,62 @@ export class TaskState {
   @Action(LoadTasks)
   loadTasks(ctx: StateContext<TaskStateModel>) {
     ctx.patchState({ loading: true });
-    const initialTasks = this.tasksService.getAllTasks();
-    ctx.dispatch(new LoadTasksSuccess(initialTasks));
-    ctx.patchState({ loading: false });
+    return this.tasksService.getTasks().subscribe({
+      next: (tasks) => {
+        ctx.dispatch(new LoadTasksSuccess(tasks));
+      },
+      error: (error) => {
+        ctx.dispatch(new LoadTasksFail(error));
+      },
+    });
   }
 
   @Action(LoadTasksSuccess)
-  loadTasksSuccess(
-    ctx: StateContext<TaskStateModel>,
-    { payload }: LoadTasksSuccess
-  ) {
-    console.log('LoadTasksSuccess payload:', payload);
+  loadTasksSuccess(ctx: StateContext<TaskStateModel>, action: LoadTasksSuccess) {
     ctx.patchState({
-      tasks: Array.isArray(payload) ? payload : [],
+      tasks: action.tasks,
       loading: false,
     });
   }
 
   @Action(LoadTasksFail)
-  loadTasksFail(
-    ctx: StateContext<TaskStateModel>,
-    { payload }: LoadTasksFail
-  ) {
-    ctx.patchState({
-      loading: false,
-    });
-    console.error('Error loading tasks', payload);
+  loadTasksFail(ctx: StateContext<TaskStateModel>) {
+    ctx.patchState({ loading: false });
   }
 
   @Action(AddTask)
-  addTask(ctx: StateContext<TaskStateModel>, { payload }: AddTask) {
-    this.tasksService.addTask(payload);
+  addTask(ctx: StateContext<TaskStateModel>, action: AddTask) {
+    const state = ctx.getState();
+    const newTask = {
+      ...action.task,
+      id: crypto.randomUUID(),
+      subtasks: action.task.subtasks || [],
+    };
     ctx.patchState({
-      tasks: [...ctx.getState().tasks, payload],
+      tasks: [...state.tasks, newTask],
     });
+    return this.tasksService.addTask(newTask);
   }
 
   @Action(UpdateTask)
-  updateTask(
-    ctx: StateContext<TaskStateModel>,
-    { payload }: UpdateTask
-  ) {
-    this.tasksService.updateTask(payload);
-    const updatedTasks = ctx.getState().tasks.map((task) =>
-      task.id === payload.id ? payload : task
+  updateTask(ctx: StateContext<TaskStateModel>, action: UpdateTask) {
+    const state = ctx.getState();
+    const updatedTasks = state.tasks.map((task) =>
+      task.id === action.task.id ? { ...task, ...action.task } : task
     );
-    ctx.patchState({ tasks: updatedTasks });
+    ctx.patchState({
+      tasks: updatedTasks,
+    });
+    return this.tasksService.updateTask(action.task);
   }
 
   @Action(DeleteTask)
-  deleteTask(
-    ctx: StateContext<TaskStateModel>,
-    { payload }: DeleteTask
-  ) {
-    this.tasksService.deleteTask(payload);
+  deleteTask(ctx: StateContext<TaskStateModel>, action: DeleteTask) {
+    const state = ctx.getState();
+    const filteredTasks = state.tasks.filter((task) => task.id !== action.taskId);
     ctx.patchState({
-      tasks: ctx.getState().tasks.filter(
-        (task) => task.id !== payload
-      ),
+      tasks: filteredTasks,
     });
+    return this.tasksService.deleteTask(action.taskId);
   }
 }

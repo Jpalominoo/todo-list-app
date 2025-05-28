@@ -1,71 +1,123 @@
 .right-menu {
+    position: fixed;
     top: 0;
     right: 0;
-    width: 300px;
-    height: 100%;
-    background-color: rgba(209,250,206,255);
-    border-right: 1px solid #ccc;
-    padding: 20px;
-    box-sizing: border-box;
-    border-radius: 0px;
+    width: 400px;
+    height: 100vh;
+    background: white;
+    box-shadow: -2px 0 5px rgba(0, 0, 0, 0.1);
+    z-index: 1000;
+    overflow-y: auto;
 }
 
-/* Right menu floating panel styles */
-.right-menu.right-menu-float {
-  position: fixed;
-  top: 0;
-  right: 0;
-  width: 340px;
-  max-width: 100vw;
-  height: 100vh;
-  background: linear-gradient(135deg, #b7e4c7 0%, #a5d8ff 100%);
-  box-shadow: -2px 0 12px rgba(37,99,235,0.12);
-  z-index: 1000;
-  padding-top: 2rem;
-  overflow-y: auto;
-  transition: transform 0.3s;
+.elements {
+    padding: 2rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+    height: 100%;
+}
+
+.task-info {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.label {
+    font-weight: 500;
+    color: #495057;
 }
 
 .footer-actions {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-top: 2rem;
-  gap: 1rem;
+    margin-top: auto;
+    padding-top: 1rem;
+    display: flex;
+    gap: 1rem;
+    border-top: 1px solid #dee2e6;
 }
 
 .save-changes-btn {
-  background: #2563eb;
-  color: #fff;
-  border: none;
-  border-radius: 8px;
-  padding: 0.5rem 1.2rem;
-  font-size: 1rem;
-  font-weight: 600;
-  box-shadow: 0 2px 8px rgba(37,99,235,0.10);
-  cursor: pointer;
-  transition: background 0.2s, color 0.2s, box-shadow 0.2s;
+    flex: 1;
+    padding: 0.75rem;
+    background: #2563eb;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: 500;
+    transition: background-color 0.2s;
 }
+
 .save-changes-btn:hover {
-  background: #1e40af;
-  color: #fff;
-  box-shadow: 0 4px 16px rgba(37,99,235,0.18);
+    background: #1d4ed8;
 }
 
 .close-right-menu-footer {
-  background: #fff;
-  color: #2563eb;
-  border: 1px solid #2563eb;
-  border-radius: 8px;
-  padding: 0.5rem 1.2rem;
-  font-size: 1rem;
-  font-weight: 600;
-  box-shadow: 0 2px 8px rgba(37,99,235,0.10);
-  cursor: pointer;
-  transition: background 0.2s, color 0.2s, box-shadow 0.2s;
+    padding: 0.75rem 1rem;
+    background: #f1f5f9;
+    color: #64748b;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: 500;
+    transition: all 0.2s;
 }
+
 .close-right-menu-footer:hover {
-  background: #2563eb;
-  color: #fff;
-  box-shadow: 0 4px 16px rgba(37,99,235,0.18);
+    background: #e2e8f0;
+    color: #475569;
+}
+
+/* Ensure the textarea has proper height */
+textarea {
+    min-height: 100px;
+    width: 100%;
+    padding: 0.75rem;
+    border: 1px solid #e2e8f0;
+    border-radius: 6px;
+    font-family: inherit;
+    resize: vertical;
+}
+
+/* Style for the title input */
+input {
+    width: 100%;
+    padding: 0.75rem;
+    border: 1px solid #e2e8f0;
+    border-radius: 6px;
+    font-size: 1rem;
+}
+
+/* Style for the calendar and select components */
+:host ::ng-deep .p-calendar,
+:host ::ng-deep .p-dropdown {
+    width: 100%;
+}
+
+:host ::ng-deep .p-dropdown {
+    background: white;
+}
+
+/* Ensure proper spacing for the subtasks component */
+todo-list-subtasks {
+    margin-top: 1rem;
+}
+
+.side-menu-theme {
+    background: linear-gradient(135deg, #b7e4c7 0%, #a5d8ff 100%) !important;
+    border-left: 1px solid #7ec4cf;
+    color: #234567;
+    box-shadow: -2px 0 12px rgba(37,99,235,0.12);
+}
+
+.side-menu-theme h1 {
+    color: #234567 !important;
+    font-weight: bold;
+    letter-spacing: 1px;
+}
+
+.side-menu-theme .label,
+.side-menu-theme .task-info label {
+    color: #234567 !important;
 }

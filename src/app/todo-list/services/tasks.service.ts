@@ -1,6 +1,7 @@
 import { effect, Injectable, signal } from '@angular/core';
 import { v4 as uuidv4 } from 'uuid'; // Make sure uuidv4 is imported if you use it for IDs
 import { Task } from '../interfaces/task.interface';
+import { Observable, of } from 'rxjs';
 
 const loadTasksFromLocalStorage = (): Task[] => {
   const tasks = localStorage.getItem('tasks');
@@ -33,6 +34,7 @@ const loadTasksFromLocalStorage = (): Task[] => {
 export class TasksService {
   // Initialize the signal with the safely loaded tasks
   tasks = signal<Task[]>(loadTasksFromLocalStorage());
+  private readonly STORAGE_KEY = 'tasks';
 
   constructor() {
     // This effect ensures that changes to the 'tasks' signal are saved to localStorage
@@ -51,30 +53,36 @@ export class TasksService {
 
   // --- Rest of your TasksService methods (addTask, updateTask, deleteTask, generateId) ---
 
-  addTask(newTask: Task) {
+  addTask(newTask: Task): Observable<Task> {
     const taskToAdd: Task = {
       ...newTask,
       id: newTask.id || this.generateId(),
     };
     this.tasks.update((list) => [...list, taskToAdd]);
+    localStorage.setItem(this.STORAGE_KEY, JSON.stringify(this.tasks()));
+    return of(taskToAdd);
   }
 
-  updateTask(updatedTask: Task) {
+  updateTask(updatedTask: Task): Observable<Task> {
     this.tasks.update((currentTasks) => {
       const index = currentTasks.findIndex((task) => task.id === updatedTask.id);
       if (index > -1) {
         const newTasks = [...currentTasks];
         newTasks[index] = updatedTask;
+        localStorage.setItem(this.STORAGE_KEY, JSON.stringify(newTasks));
         return newTasks;
       }
       return currentTasks;
     });
+    return of(updatedTask);
   }
 
-  deleteTask(taskID: string) {
+  deleteTask(taskID: string): Observable<void> {
     this.tasks.update((currentTasks) =>
       currentTasks.filter((task) => task.id !== taskID)
     );
+    localStorage.setItem(this.STORAGE_KEY, JSON.stringify(this.tasks()));
+    return of(void 0);
   }
 
   // Add a generateId if not already present
@@ -85,5 +93,10 @@ export class TasksService {
   // Method to get all tasks (used by TaskState)
   getAllTasks(): Task[] {
     return this.tasks();
+  }
+
+  getTasks(): Observable<Task[]> {
+    const tasks = this.getAllTasks();
+    return of(tasks);
   }
 }

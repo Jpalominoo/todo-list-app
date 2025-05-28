@@ -88,9 +88,9 @@ export default class TasksPageComponent implements OnInit, OnDestroy {
     this.selectedTask = null;
   }
 
-  updateTask(updated: Partial<Task>) {
-    if (!updated.id || !updated.title || !updated.status) return;
-    this.store.dispatch(new UpdateTask(updated as Task));
-    this.closeRightMenu();
+  updateTask(event: { task: Task, closeMenu: boolean }) {
+    if (!event.task.id || !event.task.title || !event.task.status) return;
+    this.store.dispatch(new UpdateTask(event.task));
+    if (event.closeMenu) this.closeRightMenu();
   }
 }
